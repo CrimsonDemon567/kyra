@@ -1,15 +1,106 @@
-Copyright © 2025 Vincent Noll. All rights reserved.
+Kyra Proprietary Software License Agreement (Germany)
+Version 1.0 — © 2025 Vincent Noll. All rights reserved.
 
-1. Grant of License: Permission is hereby granted to use and execute this Software (the "Software") for personal or internal business purposes. Programs or scripts created by the user using this Software are the sole property of the user.
+1. Definitions
 
-2. Restrictions:
+1.1 “Software”
+Refers to the program provided by the Licensor, including but not limited to compilers, interpreters, runtimes, tools, libraries, documentation, and all associated files.
 
-No Redistribution: You may not redistribute, sub-license, or make the Software available to third parties via any means.
+1.2 “Licensee”
+Refers to any natural or legal person who installs, accesses, or uses the Software.
 
-No Modification: You may not modify, adapt, decompile, or create derivative works of the Software or its compiler.
+1.3 “Internal Use”
+Means use of the Software for personal or internal business purposes, without making the Software available to third parties.
 
-No Commercial Sale: You are strictly prohibited from selling the Software or offering it as part of a commercial product without prior written consent from the Copyright Holder.
+1.4 “Output Programs”
+Refers to programs, scripts, or artifacts created by the Licensee using the Software.
 
-3. Ownership: The Software remains the sole intellectual property of the Copyright Holder named above. This license grants only a limited right to use, not a transfer of ownership.
 
-4. Disclaimer: THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
+2. Grant of License
+
+2.1 License Grant
+The Licensor grants the Licensee a non-exclusive, non-transferable, revocable license to install and use the Software for Internal Use only.
+
+2.2 Ownership of Output Programs
+All Output Programs created by the Licensee using the Software are the exclusive property of the Licensee.
+
+2.3 No Transfer of Ownership
+This License grants usage rights only. Ownership of the Software remains with the Licensor.
+
+
+3. Restrictions
+
+3.1 No Redistribution
+The Licensee may not distribute, publish, sell, rent, lease, lend, sublicense, or otherwise make the Software available to any third party.
+
+3.2 No Modification or Reverse Engineering
+The Licensee may not modify, adapt, translate, decompile, disassemble, reverse engineer, or attempt to derive the source code of the Software, except where expressly permitted by mandatory law (§ 69e UrhG).
+
+3.3 No Commercial Use
+The Licensee may not commercially exploit the Software or include it in any commercial product or service without prior written consent from the Licensor.
+
+3.4 No Assignment
+The Licensee may not transfer, assign, or sublicense this License to any third party.
+
+
+4. Intellectual Property
+
+4.1 Ownership
+The Software is and remains the exclusive intellectual property of the Licensor.
+
+4.2 No Implied Rights
+No rights or licenses are granted except those expressly stated in this Agreement.
+
+
+5. Term and Termination
+
+5.1 Term
+This License remains in effect until terminated.
+
+5.2 Termination by Licensor
+The Licensor may terminate this License immediately if the Licensee breaches any provision of this Agreement.
+
+5.3 Effect of Termination
+Upon termination, the Licensee must cease all use of the Software and delete all copies in their possession.
+
+
+6. Limitation of Liability
+
+6.1 Liability Standard
+The Licensor is liable only for damages caused by intent or gross negligence, and for damages resulting from injury to life, body, or health.
+
+6.2 Exclusion of Liability
+Any further liability is excluded to the maximum extent permitted by German law.
+
+
+7. Warranty Disclaimer
+
+7.1 “As Is” Provision
+The Software is provided “as is”, without any express or implied warranties, including but not limited to fitness for a particular purpose, merchantability, or non-infringement.
+
+7.2 No Guarantee of Functionality
+The Licensor does not guarantee that the Software will be error-free or operate without interruption.
+
+
+8. Severability
+
+8.1 Partial Invalidity
+If any provision of this Agreement is found invalid or unenforceable, the remaining provisions remain in full force.
+
+8.2 Replacement Clause
+The invalid provision shall be replaced by a valid one that most closely reflects the original intent.
+
+
+9. Governing Law and Jurisdiction
+
+9.1 Applicable Law
+This Agreement is governed by the laws of the Federal Republic of Germany.
+
+9.2 Place of Jurisdiction
+The exclusive place of jurisdiction, where legally permissible, is Mainz, Germany.
+
+
+10. Entire Agreement
+
+10.1 Completeness
+This Agreement constitutes the entire agreement between the parties and supersedes all prior understandings or agreements.
