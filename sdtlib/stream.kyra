@@ -1,0 +1,92 @@
+# -----------------------------------------
+# Stream Object
+# -----------------------------------------
+
+def stream():
+    return {
+        "buf": [],
+        "pos": 0
+    }
+
+# -----------------------------------------
+# Write Primitives
+# -----------------------------------------
+
+def write_byte(s, v):
+    s["buf"].append(v & 0xFF)
+
+def write_int(s, v):
+    s["buf"].append((v >> 24) & 0xFF)
+    s["buf"].append((v >> 16) & 0xFF)
+    s["buf"].append((v >> 8) & 0xFF)
+    s["buf"].append(v & 0xFF)
+
+def write_bool(s, v):
+    if v:
+        s["buf"].append(1)
+    else:
+        s["buf"].append(0)
+
+def write_string(s, text):
+    write_int(s, len(text))
+    i = 0
+    while i < len(text):
+        s["buf"].append(ord(text[i]) & 0xFF)
+        i = i + 1
+
+# -----------------------------------------
+# Read Primitives
+# -----------------------------------------
+
+def read_byte(s):
+    if s["pos"] >= len(s["buf"]):
+        return 0
+    v = s["buf"][s["pos"]]
+    s["pos"] = s["pos"] + 1
+    return v
+
+def read_int(s):
+    b1 = read_byte(s)
+    b2 = read_byte(s)
+    b3 = read_byte(s)
+    b4 = read_byte(s)
+    return (b1 << 24) | (b2 << 16) | (b3 << 8) | b4
+
+def read_bool(s):
+    return read_byte(s) == 1
+
+def read_string(s):
+    length = read_int(s)
+    out = ""
+    i = 0
+    while i < length:
+        out = out + chr(read_byte(s))
+        i = i + 1
+    return out
+
+# -----------------------------------------
+# Utility
+# -----------------------------------------
+
+def reset(s):
+    s["pos"] = 0
+
+def remaining(s):
+    return len(s["buf"]) - s["pos"]
+
+def clone(s):
+    out = stream()
+    i = 0
+    while i < len(s["buf"]):
+        out["buf"].append(s["buf"][i])
+        i = i + 1
+    out["pos"] = s["pos"]
+    return out
+
+def slice(s, start, end):
+    out = stream()
+    i = start
+    while i < end and i < len(s["buf"]):
+        out["buf"].append(s["buf"][i])
+        i = i + 1
+    return out
