@@ -23,7 +23,7 @@ var precedences = map[lexer.TokenType]int{
 	lexer.STAR:     6,
 	lexer.SLASH:    6,
 	lexer.PERCENT:  6,
-	lexer.ASSIGN:   0, // assignment is right-associative
+	lexer.ASSIGN:   0,
 	lexer.PLUS_EQ:  0,
 	lexer.MINUS_EQ: 0,
 	lexer.MUL_EQ:   0,
@@ -52,7 +52,6 @@ func parseExpr(p *Parser, minPrec int) Expr {
 			break
 		}
 
-		// Assignment is right-associative
 		if tok.Type == lexer.ASSIGN ||
 			tok.Type == lexer.PLUS_EQ ||
 			tok.Type == lexer.MINUS_EQ ||
@@ -63,7 +62,7 @@ func parseExpr(p *Parser, minPrec int) Expr {
 			continue
 		}
 
-		p.next() // consume operator
+		p.next()
 		right := parseExpr(p, prec+1)
 
 		left = &BinaryExpr{
@@ -180,7 +179,7 @@ func parseCall(p *Parser, callee Expr) Expr {
 // ---------------------------
 
 func parseAssignment(p *Parser, left Expr) Expr {
-	tok := p.next()
+	p.next() // consume operator (ASSIGN, +=, -=, etc.)
 
 	ident, ok := left.(*IdentExpr)
 	if !ok {
