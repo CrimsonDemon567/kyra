@@ -1,19 +1,71 @@
-def lerp(a, b, t):
-    return a + (b - a) * t
+# ---------------------------
+# Linear Path
+# ---------------------------
 
-def bezier2(a, b, c, t):
-    u = 1 - t
-    return u*u*a + 2*u*t*b + t*t*c
-
-def bezier3(a, b, c, d, t):
-    u = 1 - t
+def line(p0, p1, t):
     return (
-        u*u*u*a +
-        3*u*u*t*b +
-        3*u*t*t*c +
-        t*t*t*d
+        p0[0] + (p1[0] - p0[0]) * t,
+        p0[1] + (p1[1] - p0[1]) * t
     )
 
-def smoothstep(a, b, t):
-    t = (t - a) / (b - a)
-    return t*t*(3 - 2*t)
+# ---------------------------
+# Quadratic Bezier
+# ---------------------------
+
+def quad(p0, p1, p2, t):
+    u = 1 - t
+    return (
+        u*u*p0[0] + 2*u*t*p1[0] + t*t*p2[0],
+        u*u*p0[1] + 2*u*t*p1[1] + t*t*p2[1]
+    )
+
+# ---------------------------
+# Cubic Bezier
+# ---------------------------
+
+def cubic(p0, p1, p2, p3, t):
+    u = 1 - t
+    u2 = u * u
+    u3 = u2 * u
+    t2 = t * t
+    t3 = t2 * t
+
+    return (
+        u3*p0[0] + 3*u2*t*p1[0] + 3*u*t2*p2[0] + t3*p3[0],
+        u3*p0[1] + 3*u2*t*p1[1] + 3*u*t2*p2[1] + t3*p3[1]
+    )
+
+# ---------------------------
+# Path Length (numeric integration)
+# ---------------------------
+
+def length(func, steps):
+    total = 0
+    i = 0
+    prev = func(0)
+
+    while i <= steps:
+        t = i / steps
+        cur = func(t)
+
+        dx = cur[0] - prev[0]
+        dy = cur[1] - prev[1]
+        total = total + sqrt(dx*dx + dy*dy)
+
+        prev = cur
+        i = i + 1
+
+    return total
+
+# ---------------------------
+# Sample Path into array
+# ---------------------------
+
+def sample(func, steps):
+    arr = []
+    i = 0
+    while i <= steps:
+        t = i / steps
+        arr.append(func(t))
+        i = i + 1
+    return arr
