@@ -1,0 +1,62 @@
+# -----------------------------------------
+# Global Network Loop
+# -----------------------------------------
+
+def net_loop():
+    return {
+        "systems": [],     # list of tcp systems
+        "intervals": [],   # scheduled callbacks
+        "time": 0
+    }
+
+# -----------------------------------------
+# Register a TCP system
+# -----------------------------------------
+
+def add_system(loop, tcp):
+    loop["systems"].append(tcp)
+
+# -----------------------------------------
+# Schedule repeating callback
+# -----------------------------------------
+
+def set_interval(loop, callback, interval):
+    loop["intervals"].append({
+        "cb": callback,
+        "interval": interval,
+        "next": loop["time"] + interval
+    })
+
+# -----------------------------------------
+# Tick Loop
+# -----------------------------------------
+
+def tick_loop(loop, dt):
+    loop["time"] = loop["time"] + dt
+
+    # 1. Tick all TCP systems
+    i = 0
+    while i < len(loop["systems"]):
+        tcp_tick(loop["systems"][i], dt)
+        i = i + 1
+
+    # 2. Process scheduled callbacks
+    i = 0
+    while i < len(loop["intervals"]):
+        item = loop["intervals"][i]
+
+        if loop["time"] >= item["next"]:
+            item["cb"]()
+            item["next"] = loop["time"] + item["interval"]
+
+        i = i + 1
+
+# -----------------------------------------
+# Utility: run for N ticks
+# -----------------------------------------
+
+def run(loop, dt, ticks):
+    i = 0
+    while i < ticks:
+        tick_loop(loop, dt)
+        i = i + 1
