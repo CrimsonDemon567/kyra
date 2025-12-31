@@ -1,23 +1,61 @@
-def vec(x, y):
-    return x, y
+# ---------------------------
+# Constructors
+# ---------------------------
 
-def add(x1, y1, x2, y2):
-    return x1 + x2, y1 + y2
+def vec2(x, y):
+    return (x, y)
 
-def sub(x1, y1, x2, y2):
-    return x1 - x2, y1 - y2
+# ---------------------------
+# Basic Operations
+# ---------------------------
 
-def mul(x, y, f):
-    return x * f, y * f
+def add(a, b):
+    return (a[0] + b[0], a[1] + b[1])
 
-def dot(x1, y1, x2, y2):
-    return x1 * x2 + y1 * y2
+def sub(a, b):
+    return (a[0] - b[0], a[1] - b[1])
 
-def length(x, y):
-    return sqrt(x * x + y * y)
+def mul(a, f):
+    return (a[0] * f, a[1] * f)
 
-def normalize(x, y):
-    l = length(x, y)
+def div(a, f):
+    return (a[0] / f, a[1] / f)
+
+# ---------------------------
+# Length & Normalization
+# ---------------------------
+
+def length(a):
+    return sqrt(a[0] * a[0] + a[1] * a[1])
+
+def normalize(a):
+    l = length(a)
     if l == 0:
-        return 0, 0
-    return x / l, y / l
+        return (0, 0)
+    return (a[0] / l, a[1] / l)
+
+# ---------------------------
+# Dot Product
+# ---------------------------
+
+def dot(a, b):
+    return a[0] * b[0] + a[1] * b[1]
+
+# ---------------------------
+# Distance
+# ---------------------------
+
+def distance(a, b):
+    dx = a[0] - b[0]
+    dy = a[1] - b[1]
+    return sqrt(dx * dx + dy * dy)
+
+# ---------------------------
+# Lerp
+# ---------------------------
+
+def lerp(a, b, t):
+    return (
+        a[0] + (b[0] - a[0]) * t,
+        a[1] + (b[1] - a[1]) * t
+    )
