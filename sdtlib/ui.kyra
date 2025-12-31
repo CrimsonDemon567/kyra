@@ -1,0 +1,19 @@
+def button(x, y, w, h, mx, my, pressed):
+    if mx < x:
+        return false
+    if mx > x + w:
+        return false
+    if my < y:
+        return false
+    if my > y + h:
+        return false
+    return pressed
+
+def slider(x, y, w, mx, my, down, value):
+    if not down:
+        return value
+    if mx < x:
+        return 0
+    if mx > x + w:
+        return 1
+    return (mx - x) / w
