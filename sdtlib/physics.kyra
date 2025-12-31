@@ -1,23 +1,77 @@
-def integrate(x, y, vx, vy, ax, ay, dt):
-    vx = vx + ax * dt
-    vy = vy + ay * dt
-    x = x + vx * dt
-    y = y + vy * dt
-    return x, y, vx, vy
+# ---------------------------
+# Physics Body
+# ---------------------------
 
-def apply_drag(v, drag, dt):
-    return v * (1 - drag * dt)
+def body(x, y, vx, vy, ax, ay, mass):
+    return {
+        "pos": (x, y),
+        "vel": (vx, vy),
+        "acc": (ax, ay),
+        "mass": mass
+    }
 
-def collide_aabb(x1, y1, w1, h1, x2, y2, w2, h2):
-    if x1 > x2 + w2:
-        return false
-    if x2 > x1 + w1:
-        return false
-    if y1 > y2 + h2:
-        return false
-    if y2 > y1 + h1:
-        return false
-    return true
+# ---------------------------
+# Apply Force
+# ---------------------------
 
-def bounce(v, restitution):
-    return -v * restitution
+def apply_force(b, fx, fy):
+    b["acc"] = (
+        b["acc"][0] + fx / b["mass"],
+        b["acc"][1] + fy / b["mass"]
+    )
+
+# ---------------------------
+# Integrate (Euler)
+# ---------------------------
+
+def integrate(b, dt):
+    # v = v + a * dt
+    vx = b["vel"][0] + b["acc"][0] * dt
+    vy = b["vel"][1] + b["acc"][1] * dt
+
+    # p = p + v * dt
+    px = b["pos"][0] + vx * dt
+    py = b["pos"][1] + vy * dt
+
+    b["vel"] = (vx, vy)
+    b["pos"] = (px, py)
+
+    # Reset acceleration
+    b["acc"] = (0, 0)
+
+# ---------------------------
+# Damping
+# ---------------------------
+
+def damp(b, factor):
+    b["vel"] = (
+        b["vel"][0] * factor,
+        b["vel"][1] * factor
+    )
+
+# ---------------------------
+# Boundary Collision
+# ---------------------------
+
+def collide_bounds(b, xmin, xmax, ymin, ymax, bounce):
+    x = b["pos"][0]
+    y = b["pos"][1]
+    vx = b["vel"][0]
+    vy = b["vel"][1]
+
+    if x < xmin:
+        x = xmin
+        vx = -vx * bounce
+    elif x > xmax:
+        x = xmax
+        vx = -vx * bounce
+
+    if y < ymin:
+        y = ymin
+        vy = -vy * bounce
+    elif y > ymax:
+        y = ymax
+        vy = -vy * bounce
+
+    b["pos"] = (x, y)
+    b["vel"] = (vx, vy)
