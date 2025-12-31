@@ -44,17 +44,23 @@ jobs:
         with:
           go-version: "1.22"
 
+      # -----------------------------------------
+      # IMPORTANT: Build inside ./kyra directory
+      # -----------------------------------------
       - name: Build kyra (runtime)
+        working-directory: ./kyra
         run: |
           GOOS=${{ matrix.goos }} GOARCH=${{ matrix.arch }} \
           go build -o kyra-${{ matrix.goos }}-${{ matrix.arch }}${{ matrix.ext }} ./cmd/kyra
 
       - name: Build kyrac (compiler)
+        working-directory: ./kyra
         run: |
           GOOS=${{ matrix.goos }} GOARCH=${{ matrix.arch }} \
           go build -o kyrac-${{ matrix.goos }}-${{ matrix.arch }}${{ matrix.ext }} ./cmd/kyrac
 
       - name: Package SDK
+        working-directory: ./kyra
         run: |
           mkdir sdk
           mv kyra-* sdk/
@@ -71,8 +77,8 @@ jobs:
         with:
           name: kyra-sdk-${{ matrix.goos }}-${{ matrix.arch }}
           path: |
-            *.zip
-            *.tar.gz
+            kyra/*.zip
+            kyra/*.tar.gz
 
   release:
     name: Publish Release
