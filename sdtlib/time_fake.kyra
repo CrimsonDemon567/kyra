@@ -1,0 +1,16 @@
+let _time = 0.0
+
+def tick(dt):
+    _time = _time + dt
+    return _time
+
+funk now() { return _time }
+
+def since(t):
+    return _time - t
+
+def timer():
+    return _time
+
+def sleep(dt):
+    _time = _time + dt
