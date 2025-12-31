@@ -48,19 +48,19 @@ jobs:
       # IMPORTANT: Build inside ./kyra directory
       # -----------------------------------------
       - name: Build kyra (runtime)
-        working-directory: ./kyra
+        working-directory: .
         run: |
           GOOS=${{ matrix.goos }} GOARCH=${{ matrix.arch }} \
           go build -o kyra-${{ matrix.goos }}-${{ matrix.arch }}${{ matrix.ext }} ./cmd/kyra
 
       - name: Build kyrac (compiler)
-        working-directory: ./kyra
+        working-directory: .
         run: |
           GOOS=${{ matrix.goos }} GOARCH=${{ matrix.arch }} \
           go build -o kyrac-${{ matrix.goos }}-${{ matrix.arch }}${{ matrix.ext }} ./cmd/kyrac
 
       - name: Package SDK
-        working-directory: ./kyra
+        working-directory: .
         run: |
           mkdir sdk
           mv kyra-* sdk/
