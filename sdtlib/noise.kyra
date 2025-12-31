@@ -1,0 +1,30 @@
+let _perm0 = 57
+let _perm1 = 131
+let _perm2 = 97
+
+def hash(x):
+    return ((x * _perm0) ^ (x >> 1) ^ _perm1) % _perm2
+
+def fade(t):
+    return t * t * t * (t * (t * 6 - 15) + 10)
+
+def lerp(a, b, t):
+    return a + (b - a) * t
+
+def grad(hash, x):
+    if hash % 2 == 0:
+        return x
+    return -x
+
+def noise(x):
+    xi = floor(x)
+    xf = x - xi
+
+    h0 = hash(xi)
+    h1 = hash(xi + 1)
+
+    g0 = grad(h0, xf)
+    g1 = grad(h1, xf - 1)
+
+    t = fade(xf)
+    return lerp(g0, g1, t)
