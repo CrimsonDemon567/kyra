@@ -1,0 +1,25 @@
+def distance(x1, y1, x2, y2):
+    dx = x2 - x1
+    dy = y2 - y1
+    return sqrt(dx*dx + dy*dy)
+
+def angle(x1, y1, x2, y2):
+    dx = x2 - x1
+    dy = y2 - y1
+    return atan2(dy, dx)
+
+def inside_circle(px, py, cx, cy, r):
+    dx = px - cx
+    dy = py - cy
+    return dx*dx + dy*dy <= r*r
+
+def inside_rect(px, py, x, y, w, h):
+    if px < x:
+        return false
+    if px > x + w:
+        return false
+    if py < y:
+        return false
+    if py > y + h:
+        return false
+    return true
