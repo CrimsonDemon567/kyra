@@ -1,0 +1,19 @@
+def lerp(a, b, t):
+    return a + (b - a) * t
+
+def bezier2(a, b, c, t):
+    u = 1 - t
+    return u*u*a + 2*u*t*b + t*t*c
+
+def bezier3(a, b, c, d, t):
+    u = 1 - t
+    return (
+        u*u*u*a +
+        3*u*u*t*b +
+        3*u*t*t*c +
+        t*t*t*d
+    )
+
+def smoothstep(a, b, t):
+    t = (t - a) / (b - a)
+    return t*t*(3 - 2*t)
