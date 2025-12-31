@@ -14,8 +14,8 @@ type VM struct {
 	constants []interface{}
 	code      []byte
 
-	ip   int
-	sp   int
+	ip    int
+	sp    int
 	stack []interface{}
 
 	callStack []Frame
@@ -58,7 +58,7 @@ func (vm *VM) loadModule(code []byte) {
 	fnCount := int(binary.LittleEndian.Uint32(code[offset:]))
 	offset += 4
 
-	// Skip function chunks (we load them lazily)
+	// Skip function chunks (lazy load)
 	for i := 0; i < fnCount; i++ {
 		// constants
 		cCount := int(binary.LittleEndian.Uint32(code[offset:]))
@@ -71,8 +71,7 @@ func (vm *VM) loadModule(code []byte) {
 			switch kind {
 			case 1: // string
 				l := int(binary.LittleEndian.Uint32(code[offset:]))
-				offset += 4
-				offset += l
+				offset += 4 + l
 			case 2: // float64
 				offset += 8
 			case 3: // int
@@ -84,8 +83,7 @@ func (vm *VM) loadModule(code []byte) {
 
 		// code
 		l := int(binary.LittleEndian.Uint32(code[offset:]))
-		offset += 4
-		offset += l
+		offset += 4 + l
 	}
 
 	// Main chunk
@@ -251,7 +249,6 @@ func (vm *VM) Run() interface{} {
 		case 0x12: // OP_CALL
 			argCount := vm.readInt()
 			fnID := int(vm.pop().(float64))
-
 			vm.callFunction(fnID, argCount)
 
 		case 0x13: // OP_RET
@@ -290,7 +287,7 @@ func (vm *VM) Run() interface{} {
 // ---------------------------
 
 func (vm *VM) callFunction(fnID int, argCount int) {
-	fn := loadFunction(fnID)
+	fnCode, fnConsts := loadFunction(fnID)
 
 	frame := Frame{
 		ipBackup: vm.ip,
@@ -301,8 +298,8 @@ func (vm *VM) callFunction(fnID int, argCount int) {
 
 	vm.callStack = append(vm.callStack, frame)
 
-	vm.code = fn.Chunk.Code
-	vm.constants = fn.Chunk.Constants
+	vm.code = fnCode
+	vm.constants = fnConsts
 	vm.ip = 0
 	vm.sp = 0
 
