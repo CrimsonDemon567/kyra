@@ -1,22 +1,102 @@
-def mean(a, b):
-    return (a + b) / 2
+# ---------------------------
+# Sum
+# ---------------------------
 
-def weighted_mean(a, b, wa, wb):
-    return (a * wa + b * wb) / (wa + wb)
+def sum(arr):
+    s = 0
+    i = 0
+    while i < len(arr):
+        s = s + arr[i]
+        i = i + 1
+    return s
 
-def clamp(x, lo, hi):
-    if x < lo:
-        return lo
-    if x > hi:
-        return hi
-    return x
+# ---------------------------
+# Mean
+# ---------------------------
 
-def map_range(x, a1, b1, a2, b2):
-    return a2 + (x - a1) * (b2 - a2) / (b1 - a1)
+def mean(arr):
+    if len(arr) == 0:
+        return 0
+    return sum(arr) / len(arr)
 
-def variance(a, b):
-    m = mean(a, b)
-    return ((a - m) * (a - m) + (b - m) * (b - m)) / 2
+# ---------------------------
+# Min / Max
+# ---------------------------
 
-def stddev(a, b):
-    return sqrt(variance(a, b))
+def min(arr):
+    if len(arr) == 0:
+        return 0
+    m = arr[0]
+    i = 1
+    while i < len(arr):
+        if arr[i] < m:
+            m = arr[i]
+        i = i + 1
+    return m
+
+def max(arr):
+    if len(arr) == 0:
+        return 0
+    m = arr[0]
+    i = 1
+    while i < len(arr):
+        if arr[i] > m:
+            m = arr[i]
+        i = i + 1
+    return m
+
+# ---------------------------
+# Variance
+# ---------------------------
+
+def variance(arr):
+    if len(arr) == 0:
+        return 0
+    m = mean(arr)
+    s = 0
+    i = 0
+    while i < len(arr):
+        d = arr[i] - m
+        s = s + d * d
+        i = i + 1
+    return s / len(arr)
+
+# ---------------------------
+# Standard Deviation
+# ---------------------------
+
+def stdev(arr):
+    return sqrt(variance(arr))
+
+# ---------------------------
+# Median
+# ---------------------------
+
+def median(arr):
+    n = len(arr)
+    if n == 0:
+        return 0
+
+    # Copy array (Kyra hat kein slice yet)
+    tmp = []
+    i = 0
+    while i < n:
+        tmp.append(arr[i])
+        i = i + 1
+
+    # Simple bubble sort (rein Kyra)
+    a = 0
+    while a < n:
+        b = 0
+        while b < n - 1:
+            if tmp[b] > tmp[b + 1]:
+                t = tmp[b]
+                tmp[b] = tmp[b + 1]
+                tmp[b + 1] = t
+            b = b + 1
+        a = a + 1
+
+    if n % 2 == 1:
+        return tmp[n // 2]
+    else:
+        return (tmp[n // 2 - 1] + tmp[n // 2]) / 2
