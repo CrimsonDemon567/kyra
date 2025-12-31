@@ -1,0 +1,23 @@
+def vec(x, y):
+    return x, y
+
+def add(x1, y1, x2, y2):
+    return x1 + x2, y1 + y2
+
+def sub(x1, y1, x2, y2):
+    return x1 - x2, y1 - y2
+
+def mul(x, y, f):
+    return x * f, y * f
+
+def dot(x1, y1, x2, y2):
+    return x1 * x2 + y1 * y2
+
+def length(x, y):
+    return sqrt(x * x + y * y)
+
+def normalize(x, y):
+    l = length(x, y)
+    if l == 0:
+        return 0, 0
+    return x / l, y / l
