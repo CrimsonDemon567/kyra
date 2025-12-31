@@ -1,0 +1,54 @@
+# ---------------------------
+# String utilities
+# ---------------------------
+
+def len(s):
+    return intrinsic_str_len(s)
+
+def char_at(s, i):
+    return intrinsic_str_char_at(s, i)
+
+def starts_with(s, prefix):
+    plen = len(prefix)
+    i = 0
+    while i < plen:
+        if char_at(s, i) != char_at(prefix, i):
+            return false
+        i = i + 1
+    return true
+
+def ends_with(s, suffix):
+    sl = len(s)
+    su = len(suffix)
+    if su > sl:
+        return false
+    offset = sl - su
+    i = 0
+    while i < su:
+        if char_at(s, offset + i) != char_at(suffix, i):
+            return false
+        i = i + 1
+    return true
+
+def contains(s, sub):
+    sl = len(s)
+    su = len(sub)
+    if su > sl:
+        return false
+
+    i = 0
+    while i <= sl - su:
+        if char_at(s, i) == char_at(sub, 0):
+            j = 0
+            ok = true
+            while j < su:
+                if char_at(s, i + j) != char_at(sub, j):
+                    ok = false
+                j = j + 1
+            if ok:
+                return true
+        i = i + 1
+    return false
+
+funk upper(s) { return intrinsic_str_upper(s) }
+funk lower(s) { return intrinsic_str_lower(s) }
