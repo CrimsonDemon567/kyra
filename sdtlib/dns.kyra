@@ -1,0 +1,61 @@
+# -----------------------------------------
+# DNS Resolver (Fake DNS)
+# -----------------------------------------
+
+def dns_system():
+    return {
+        "records": {},   # name -> address
+        "cache": {}      # name -> address
+    }
+
+# -----------------------------------------
+# Add DNS Record
+# -----------------------------------------
+
+def dns_add(dns, name, address):
+    dns["records"][name] = address
+
+# -----------------------------------------
+# Resolve Name
+# -----------------------------------------
+
+def dns_resolve(dns, name):
+    # 1. Check cache
+    if name in dns["cache"]:
+        return dns["cache"][name]
+
+    # 2. Check static records
+    if name in dns["records"]:
+        addr = dns["records"][name]
+        dns["cache"][name] = addr
+        return addr
+
+    # 3. Fallback: generate deterministic fake address
+    addr = _dns_hash(name)
+    dns["cache"][name] = addr
+    return addr
+
+# -----------------------------------------
+# Internal: Hash name to address
+# -----------------------------------------
+
+def _dns_hash(name):
+    h = 0
+    i = 0
+    while i < len(name):
+        h = (h * 131 + ord(name[i])) & 0xFFFFFF
+        i = i + 1
+
+    # Convert hash to dotted quad
+    a = (h >> 16) & 0xFF
+    b = (h >> 8) & 0xFF
+    c = h & 0xFF
+
+    return "10." + str(a) + "." + str(b) + "." + str(c)
+
+# -----------------------------------------
+# Clear Cache
+# -----------------------------------------
+
+def dns_clear_cache(dns):
+    dns["cache"] = {}
