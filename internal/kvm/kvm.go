@@ -42,7 +42,6 @@ func New(code []byte) *VM {
 }
 
 func (vm *VM) loadModule(code []byte) {
-	// Header: KBC + version
 	if string(code[:3]) != "KBC" {
 		panic("Invalid bytecode header")
 	}
@@ -54,13 +53,10 @@ func (vm *VM) loadModule(code []byte) {
 
 	offset := 4
 
-	// Function count
 	fnCount := int(binary.LittleEndian.Uint32(code[offset:]))
 	offset += 4
 
-	// Skip function chunks (lazy load)
 	for i := 0; i < fnCount; i++ {
-		// constants
 		cCount := int(binary.LittleEndian.Uint32(code[offset:]))
 		offset += 4
 
@@ -69,24 +65,22 @@ func (vm *VM) loadModule(code []byte) {
 			offset++
 
 			switch kind {
-			case 1: // string
+			case 1:
 				l := int(binary.LittleEndian.Uint32(code[offset:]))
 				offset += 4 + l
-			case 2: // float64
+			case 2:
 				offset += 8
-			case 3: // int
+			case 3:
 				offset += 4
 			default:
 				panic("Unknown constant type in function chunk")
 			}
 		}
 
-		// code
 		l := int(binary.LittleEndian.Uint32(code[offset:]))
 		offset += 4 + l
 	}
 
-	// Main chunk
 	cCount := int(binary.LittleEndian.Uint32(code[offset:]))
 	offset += 4
 
@@ -97,19 +91,19 @@ func (vm *VM) loadModule(code []byte) {
 		offset++
 
 		switch kind {
-		case 1: // string
+		case 1:
 			l := int(binary.LittleEndian.Uint32(code[offset:]))
 			offset += 4
 			str := string(code[offset : offset+l])
 			offset += l
 			vm.constants[i] = str
 
-		case 2: // float64
+		case 2:
 			bits := binary.LittleEndian.Uint64(code[offset:])
 			offset += 8
 			vm.constants[i] = math.Float64frombits(bits)
 
-		case 3: // int
+		case 3:
 			v := int(binary.LittleEndian.Uint32(code[offset:]))
 			offset += 4
 			vm.constants[i] = v
@@ -164,114 +158,114 @@ func (vm *VM) Run() interface{} {
 
 		switch op {
 
-		case 0x01: // OP_CONST
+		case 0x01:
 			idx := vm.readInt()
 			vm.push(vm.constants[idx])
 
-		case 0x02: // OP_ADD
+		case 0x02:
 			b := vm.pop().(float64)
 			a := vm.pop().(float64)
 			vm.push(a + b)
 
-		case 0x03: // OP_SUB
+		case 0x03:
 			b := vm.pop().(float64)
 			a := vm.pop().(float64)
 			vm.push(a - b)
 
-		case 0x04: // OP_MUL
+		case 0x04:
 			b := vm.pop().(float64)
 			a := vm.pop().(float64)
 			vm.push(a * b)
 
-		case 0x05: // OP_DIV
+		case 0x05:
 			b := vm.pop().(float64)
 			a := vm.pop().(float64)
 			vm.push(a / b)
 
-		case 0x06: // OP_MOD
+		case 0x06:
 			b := vm.pop().(float64)
 			a := vm.pop().(float64)
 			vm.push(math.Mod(a, b))
 
-		case 0x07: // OP_EQ
+		case 0x07:
 			b := vm.pop()
 			a := vm.pop()
 			vm.push(boolToFloat(a == b))
 
-		case 0x08: // OP_NEQ
+		case 0x08:
 			b := vm.pop()
 			a := vm.pop()
 			vm.push(boolToFloat(a != b))
 
-		case 0x09: // OP_LT
+		case 0x09:
 			b := vm.pop().(float64)
 			a := vm.pop().(float64)
 			vm.push(boolToFloat(a < b))
 
-		case 0x0A: // OP_GT
+		case 0x0A:
 			b := vm.pop().(float64)
 			a := vm.pop().(float64)
 			vm.push(boolToFloat(a > b))
 
-		case 0x0B: // OP_LE
+		case 0x0B:
 			b := vm.pop().(float64)
 			a := vm.pop().(float64)
 			vm.push(boolToFloat(a <= b))
 
-		case 0x0C: // OP_GE
+		case 0x0C:
 			b := vm.pop().(float64)
 			a := vm.pop().(float64)
 			vm.push(boolToFloat(a >= b))
 
-		case 0x0D: // OP_AND
+		case 0x0D:
 			b := vm.pop().(float64)
 			a := vm.pop().(float64)
 			vm.push(boolToFloat(a != 0 && b != 0))
 
-		case 0x0E: // OP_OR
+		case 0x0E:
 			b := vm.pop().(float64)
 			a := vm.pop().(float64)
 			vm.push(boolToFloat(a != 0 || b != 0))
 
-		case 0x0F: // OP_NOT
+		case 0x0F:
 			a := vm.pop().(float64)
 			vm.push(boolToFloat(a == 0))
 
-		case 0x10: // OP_LOAD
+		case 0x10:
 			idx := vm.readInt()
 			vm.push(vm.constants[idx])
 
-		case 0x11: // OP_STORE
+		case 0x11:
 			idx := vm.readInt()
 			val := vm.pop()
 			vm.constants[idx] = val
 
-		case 0x12: // OP_CALL
+		case 0x12:
 			argCount := vm.readInt()
 			fnID := int(vm.pop().(float64))
 			vm.callFunction(fnID, argCount)
 
-		case 0x13: // OP_RET
+		case 0x13:
 			if len(vm.callStack) == 0 {
 				return vm.pop()
 			}
 			vm.returnFromFunction()
 
-		case 0x14: // OP_JMP
+		case 0x14:
 			target := vm.readInt()
 			vm.ip = target
 
-		case 0x15: // OP_JMPF
+		case 0x15:
 			target := vm.readInt()
 			cond := vm.pop().(float64)
 			if cond == 0 {
 				vm.ip = target
 			}
 
-		case 0x16: // OP_POP
+		case 0x16:
 			vm.pop()
 
-		case 0x17: // OP_EXIT
+		case 0x17:
 			return nil
 
 		default:
@@ -287,7 +281,7 @@ func (vm *VM) Run() interface{} {
 // ---------------------------
 
 func (vm *VM) callFunction(fnID int, argCount int) {
-	fnCode, fnConsts := loadFunction(fnID)
+	fn := loadFunction(fnID)
 
 	frame := Frame{
 		ipBackup: vm.ip,
@@ -298,8 +292,8 @@ func (vm *VM) callFunction(fnID int, argCount int) {
 
 	vm.callStack = append(vm.callStack, frame)
 
-	vm.code = fnCode
-	vm.constants = fnConsts
+	vm.code = fn.Chunk
+	vm.constants = fn.Consts
 	vm.ip = 0
 	vm.sp = 0
 
