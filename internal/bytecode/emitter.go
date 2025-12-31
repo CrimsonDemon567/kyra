@@ -11,35 +11,35 @@ import (
 // ---------------------------
 
 const (
-	OP_CONST    = 0x01
-	OP_ADD      = 0x02
-	OP_SUB      = 0x03
-	OP_MUL      = 0x04
-	OP_DIV      = 0x05
-	OP_MOD      = 0x06
+	OP_CONST = 0x01
+	OP_ADD   = 0x02
+	OP_SUB   = 0x03
+	OP_MUL   = 0x04
+	OP_DIV   = 0x05
+	OP_MOD   = 0x06
 
-	OP_EQ       = 0x07
-	OP_NEQ      = 0x08
-	OP_LT       = 0x09
-	OP_GT       = 0x0A
-	OP_LE       = 0x0B
-	OP_GE       = 0x0C
+	OP_EQ  = 0x07
+	OP_NEQ = 0x08
+	OP_LT  = 0x09
+	OP_GT  = 0x0A
+	OP_LE  = 0x0B
+	OP_GE  = 0x0C
 
-	OP_AND      = 0x0D
-	OP_OR       = 0x0E
-	OP_NOT      = 0x0F
+	OP_AND = 0x0D
+	OP_OR  = 0x0E
+	OP_NOT = 0x0F
 
-	OP_LOAD     = 0x10
-	OP_STORE    = 0x11
+	OP_LOAD  = 0x10
+	OP_STORE = 0x11
 
-	OP_CALL     = 0x12
-	OP_RET      = 0x13
+	OP_CALL = 0x12
+	OP_RET  = 0x13
 
-	OP_JMP      = 0x14
-	OP_JMPF     = 0x15
+	OP_JMP  = 0x14
+	OP_JMPF = 0x15
 
-	OP_POP      = 0x16
-	OP_EXIT     = 0x17
+	OP_POP  = 0x16
+	OP_EXIT = 0x17
 )
 
 // ---------------------------
@@ -80,60 +80,20 @@ func (c *Chunk) addConst(v interface{}) int {
 // ---------------------------
 
 func Emit(ast *parser.AST) []byte {
+	// Funktions-Tabelle für dieses Modul zurücksetzen
+	resetFunctions()
+
 	mainChunk := NewChunk()
 
 	for _, stmt := range ast.TopLevel {
 		emitStmt(mainChunk, stmt)
 	}
 
-	// Implicit return
+	// Implizites return aus main
 	mainChunk.emit(OP_RET)
 
-	return encodeModule(mainChunk)
-}
-
-// ---------------------------
-// Encode module to .kbc
-// ---------------------------
-
-func encodeModule(chunk *Chunk) []byte {
-	out := []byte{}
-
-	// Header: KBC + version
-	out = append(out, 'K', 'B', 'C', 1)
-
-	// Constant count
-	buf := make([]byte, 4)
-	binary.LittleEndian.PutUint32(buf, uint32(len(chunk.Constants)))
-	out = append(out, buf...)
-
-	// Constants
-	for _, c := range chunk.Constants {
-		switch v := c.(type) {
-		case string:
-			out = append(out, 1)
-			str := []byte(v)
-			binary.LittleEndian.PutUint32(buf, uint32(len(str)))
-			out = append(out, buf...)
-			out = append(out, str...)
-		case float64:
-			out = append(out, 2)
-			fb := make([]byte, 8)
-			binary.LittleEndian.PutUint64(fb, math.Float64bits(v))
-			out = append(out, fb...)
-		default:
-			panic(fmt.Sprintf("Unknown constant type: %T", v))
-		}
-	}
-
-	// Code length
-	binary.LittleEndian.PutUint32(buf, uint32(len(chunk.Code)))
-	out = append(out, buf...)
-
-	// Code
-	out = append(out, chunk.Code...)
-
-	return out
+	// Mit Funktionen + Main-Chunk zu KBC v2 encodieren
+	return encodeModuleWithFunctions(mainChunk)
 }
 
 // ---------------------------
@@ -250,14 +210,14 @@ func emitStmt(c *Chunk, stmt parser.Stmt) {
 		patchJump(c, exitPos)
 
 	case *parser.FuncDef:
-		// TODO: full function support in next file
-		panic("Function definitions not yet implemented in this file")
+		// Vollständige Funktionsunterstützung über functions.go
+		emitFunctionDef(c, s)
 
 	case *parser.FuncExprDef:
-		panic("Function blocks not yet implemented in this file")
+		emitFunctionExpr(c, s)
 
 	case *parser.FuncOneLiner:
-		panic("One-liner functions not yet implemented in this file")
+		emitFunctionOneLiner(c, s)
 
 	default:
 		panic(fmt.Sprintf("Unknown statement type: %T", stmt))
@@ -340,19 +300,32 @@ func emitExpr(c *Chunk, expr parser.Expr) {
 
 func emitBinaryOp(c *Chunk, op string) {
 	switch op {
-	case "+": c.emit(OP_ADD)
-	case "-": c.emit(OP_SUB)
-	case "*": c.emit(OP_MUL)
-	case "/": c.emit(OP_DIV)
-	case "%": c.emit(OP_MOD)
-	case "==": c.emit(OP_EQ)
-	case "!=": c.emit(OP_NEQ)
-	case "<": c.emit(OP_LT)
-	case ">": c.emit(OP_GT)
-	case "<=": c.emit(OP_LE)
-	case ">=": c.emit(OP_GE)
-	case "&&": c.emit(OP_AND)
-	case "||": c.emit(OP_OR)
+	case "+":
+		c.emit(OP_ADD)
+	case "-":
+		c.emit(OP_SUB)
+	case "*":
+		c.emit(OP_MUL)
+	case "/":
+		c.emit(OP_DIV)
+	case "%":
+		c.emit(OP_MOD)
+	case "==":
+		c.emit(OP_EQ)
+	case "!=":
+		c.emit(OP_NEQ)
+	case "<":
+		c.emit(OP_LT)
+	case ">":
+		c.emit(OP_GT)
+	case "<=":
+		c.emit(OP_LE)
+	case ">=":
+		c.emit(OP_GE)
+	case "&&":
+		c.emit(OP_AND)
+	case "||":
+		c.emit(OP_OR)
 	default:
 		panic("Unknown binary operator: " + op)
 	}
