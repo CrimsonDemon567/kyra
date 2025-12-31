@@ -1,0 +1,23 @@
+def clamp01(x):
+    if x < 0:
+        return 0
+    if x > 1:
+        return 1
+    return x
+
+def rgba(r, g, b, a):
+    return r, g, b, a
+
+def add(r1, g1, b1, a1, r2, g2, b2, a2):
+    return clamp01(r1 + r2), clamp01(g1 + g2), clamp01(b1 + b2), clamp01(a1 + a2)
+
+def mul(r, g, b, a, f):
+    return clamp01(r * f), clamp01(g * f), clamp01(b * f), clamp01(a * f)
+
+def lerp(r1, g1, b1, a1, r2, g2, b2, a2, t):
+    return (
+        r1 + (r2 - r1) * t,
+        g1 + (g2 - g1) * t,
+        b1 + (b2 - b1) * t,
+        a1 + (a2 - a1) * t
+    )
