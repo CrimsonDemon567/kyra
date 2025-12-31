@@ -1,42 +1,56 @@
-def fade(t):
-    return t*t*t*(t*(t*6 - 15) + 10)
+# ---------------------------
+# Internal 2D Hash
+# ---------------------------
 
-def lerp(a, b, t):
-    return a + (b - a) * t
+def _hash2(x, y):
+    n = x * 374761393 + y * 668265263
+    n = (n ^ (n >> 13)) * 1274126177
+    return (n ^ (n >> 16)) & 0x7fffffff
 
-def hash(x, y):
-    return ((x * 1619) ^ (y * 31337) ^ (x >> 1)) % 255
+# ---------------------------
+# Value Noise 2D
+# ---------------------------
 
-def grad(h, x, y):
-    if h % 4 == 0:
-        return x + y
-    if h % 4 == 1:
-        return x - y
-    if h % 4 == 2:
-        return -x + y
-    return -x - y
-
-def noise(x, y):
+def noise2(x, y):
     xi = floor(x)
     yi = floor(y)
 
     xf = x - xi
     yf = y - yi
 
-    h00 = hash(xi, yi)
-    h10 = hash(xi+1, yi)
-    h01 = hash(xi, yi+1)
-    h11 = hash(xi+1, yi+1)
+    # Four corners
+    n00 = (_hash2(xi, yi)     % 10000) / 10000
+    n10 = (_hash2(xi + 1, yi) % 10000) / 10000
+    n01 = (_hash2(xi, yi + 1) % 10000) / 10000
+    n11 = (_hash2(xi + 1, yi + 1) % 10000) / 10000
 
-    g00 = grad(h00, xf, yf)
-    g10 = grad(h10, xf-1, yf)
-    g01 = grad(h01, xf, yf-1)
-    g11 = grad(h11, xf-1, yf-1)
+    # Smoothstep
+    sx = xf * xf * (3 - 2 * xf)
+    sy = yf * yf * (3 - 2 * yf)
 
-    u = fade(xf)
-    v = fade(yf)
+    # Interpolate X
+    ix0 = n00 * (1 - sx) + n10 * sx
+    ix1 = n01 * (1 - sx) + n11 * sx
 
-    nx0 = lerp(g00, g10, u)
-    nx1 = lerp(g01, g11, u)
+    # Interpolate Y
+    return ix0 * (1 - sy) + ix1 * sy
 
-    return lerp(nx0, nx1, v)
+# ---------------------------
+# Fractal Noise (Octaves)
+# ---------------------------
+
+def fnoise2(x, y, octaves, persistence):
+    total = 0
+    amp = 1
+    freq = 1
+    maxamp = 0
+
+    i = 0
+    while i < octaves:
+        total = total + noise2(x * freq, y * freq) * amp
+        maxamp = maxamp + amp
+        amp = amp * persistence
+        freq = freq * 2
+        i = i + 1
+
+    return total / maxamp
